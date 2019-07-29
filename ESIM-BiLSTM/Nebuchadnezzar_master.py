@@ -66,25 +66,33 @@ class Nebuchadnezzar:
             print('\n[  Iteration %s  ]\n' % str(epoch+1))
             self.train.shuffle()
             self.trainee.train()
+            self.trainee.eval_rate_clear()
             for update_iter, batch_data in enumerate(
-                    self.train.batch_generator(self.params.batch_size, self.params.use_gpu)):
+                    self.train.batch_generator(self.params.batch_size, self.params.use_gpu,device=self.params.device)):
+
                 self.trainee.clear_grads()
                 self.trainee.forward_compute(batch_data)
                 self.trainee.opt_step()
 
                 if update_iter % self.params.show_iter == 0 and update_iter != 0:
                     self.trainee.batch_show(update_iter)
+
             self.trainee.correct_show(self.train.batch_num)
             self.trainee.eval()
             print('dev data set: ')
-            self.eval_process(self.dev)
+            dev_rate=self.eval_process(self.dev)
             print('test data set: ')
-            self.eval_process(self.test)
+            test_rate=self.eval_process(self.test)
+            self.trainee.reset_best(epoch,dev_rate,test_rate)
+            self.trainee.best_show(epoch)
 
     # 3.模型测试
     def eval_process(self,
-                     dataset: InstanceList):
+                     dataset: InstanceList
+                     ) -> float:
+        self.trainee.eval_rate_clear()
         for update_iter, batch_data in enumerate(
-                dataset.batch_generator(self.params.batch_size, self.params.use_gpu)):
+                dataset.batch_generator(self.params.batch_size, self.params.use_gpu,device=self.params.device)):
             self.trainee.forward_compute(batch_data)
         self.trainee.correct_show(dataset.batch_num)
+        return self.trainee.correct_rate/dataset.batch_num

@@ -50,6 +50,7 @@ if __name__ == '__main__':
     if not torch.cuda.is_available() or not torch.backends.cudnn.enabled or torch.cuda.device_count()<=0:
         params.use_gpu=False
     params.device=torch.device("cuda:"+str(params.device_id) if params.use_gpu else 'cpu')
+    params.show()
 
     master=Nebuchadnezzar(params)
     master.data_process()

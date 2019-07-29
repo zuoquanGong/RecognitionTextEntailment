@@ -37,8 +37,11 @@ class Params:
         self.batch_size=32
         self.show_iter=20
 
-        self.save_file='model_save/'
-    def __show__(self):
+        self.has_load_model=False
+        self.has_save_model=True
+        self.save_model_path='model_save/'
+        self.load_model_path='model_save/'
+    def show(self):
         #__dict__函数可以获得一个dict，形式为{ 实例的属性 ：属性值 }
         print('\n[  Parameters  ]\n')
         for item in self.__dict__.items():

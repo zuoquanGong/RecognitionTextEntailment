@@ -158,7 +158,7 @@ class InstanceList(List):
                 inst.read(line)
                 self.append(inst)
 
-    # **创建词表
+    # **创建词
     def vocab_maker(self):
         all_sent_p=[inst.sent_p for inst in self]
         all_sent_h=[inst.sent_h for inst in self]
@@ -260,10 +260,11 @@ class InstanceList(List):
             # mask_p_max=mask_p.sum(dim=1).max()
             # mask_h_max=mask_h.sum(dim=1).max()
             if use_gpu:
-                batch_sent_p.to(device=device)
-                batch_sent_h.to(device=device)
-                mask_p.to(device=device)
-                mask_h.to(device=device)
+                batch_sent_p=batch_sent_p.to(device=device)
+                batch_sent_h=batch_sent_h.to(device=device)
+                mask_p=mask_p.to(device=device)
+                mask_h=mask_h.to(device=device)
+                batch_label=batch_label.to(device=device)
 
             if self.has_pretrain:
                 batch_sent_p_ext=Variable(LongTensor(batch_size,sent_p_max_len).zero_())
@@ -276,8 +277,8 @@ class InstanceList(List):
                     batch_sent_p_ext[idx,:sent_p_len]=LongTensor(sent_p_ext)
                     batch_sent_h_ext[idx,:sent_h_len]=LongTensor(sent_h_ext)
                 if use_gpu:
-                    batch_sent_p_ext.to(device=device)
-                    batch_sent_h_ext.to(device=device)
+                    batch_sent_p_ext=batch_sent_p_ext.to(device=device)
+                    batch_sent_h_ext=batch_sent_h_ext.to(device=device)
                 # batch_sent_p_ext=self.ext_embedding(batch_sent_p_ext)
                 # batch_sent_h_ext=self.ext_embedding(batch_sent_h_ext)
 
